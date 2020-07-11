@@ -1,3 +1,8 @@
+# Отображение всех ошибок в PHP для целей разработки
+php_flag display_errors on
+
+# Перенаправление с несуществующих путей на index.html
+# и обработка пути /view
 RewriteEngine On
 RewriteRule view/(.*) view.php?$1
 RewriteCond %{REQUEST_FILENAME} !-f
