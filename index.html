@@ -3,10 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <title>Hello world</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
-Hello world!
-<br/>
-<a href="task.html">Перейти на страницу с описанием задания</a>
+<p>Hello world!</p>
+<p>Оно работает, но что-то этот огород мне совсем не нравится :(</p>
+<ul>
+    <li><a href="/" onclick="loadView('/'); return false">Перейти на главную страницу</a></li>
+    <li><a href="/task" onclick="loadView('/task'); return false">Перейти на страницу с описанием задания</a></li>
+    <li><a href="/noexists" onclick="loadView('/noexists'); return false">Перейти на несуществующую страницу</a></li>
+</ul>
+<div id="status">Тут будет показано состояние загрузки документа</div>
+<hr/>
+<div id="content" class="m-0"></div>
+<script>
+    const status = document.getElementById("status");
+    const content = document.getElementById("content");
+
+    function loadView(page) {
+        status.innerText = "Загрузка...";
+        history.pushState(page, null, document.location.origin+page);
+        fetch("/view/"+page)
+            .then(value => value.text())
+            .then(text => {
+                status.innerText = "Загружено";
+                content.innerHTML = text;
+            }).catch(reason => {
+            status.innerText = "Произошла ошибка при загрузке данных";
+            console.error(reason);
+        });
+        return false;
+    }
+
+    loadView(document.location.pathname);
+</script>
 </body>
 </html>
