@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 10.0.0.57
--- Время создания: Июл 11 2020 г., 23:32
+-- Время создания: Июл 13 2020 г., 00:00
 -- Версия сервера: 5.7.26-29
 -- Версия PHP: 7.1.33
 
@@ -82,6 +82,18 @@ CREATE TABLE `user` (
   `deleted` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `versions`
+--
+
+CREATE TABLE `versions` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
 --
 -- Индексы сохранённых таблиц
 --
@@ -117,6 +129,12 @@ ALTER TABLE `user`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Индексы таблицы `versions`
+--
+ALTER TABLE `versions`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -142,6 +160,12 @@ ALTER TABLE `task`
 -- AUTO_INCREMENT для таблицы `user`
 --
 ALTER TABLE `user`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `versions`
+--
+ALTER TABLE `versions`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
