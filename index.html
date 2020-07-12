@@ -17,26 +17,7 @@
 <div id="status">Тут будет показано состояние загрузки документа</div>
 <hr/>
 <div id="content" class="m-0"></div>
-<script>
-    const status = document.getElementById("status");
-    const content = document.getElementById("content");
-
-    function loadView(page) {
-        status.innerText = "Загрузка...";
-        history.pushState(page, null, document.location.origin+page);
-        fetch("/view/"+page)
-            .then(value => value.text())
-            .then(text => {
-                status.innerText = "Загружено";
-                content.innerHTML = text;
-            }).catch(reason => {
-            status.innerText = "Произошла ошибка при загрузке данных";
-            console.error(reason);
-        });
-        return false;
-    }
-
-    loadView(document.location.pathname);
+<script src="load.js">
 </script>
 </body>
 </html>
