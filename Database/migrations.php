@@ -1,10 +1,5 @@
 <?php
-// Объявляем нужные константы
-define('DB_HOST', 'localhost');
-define('DB_USER', 'checkList');
-define('DB_PASSWORD', 'hRHiqOZT');
-define('DB_NAME', 'checkList');
-define('DB_TABLE_VERSIONS', 'versions');
+require('config.php');
 
 
 function connectDB() {
@@ -36,6 +31,13 @@ function getMigrationFiles($conn) {
 
     // Первая миграция, возвращаем все файлы из папки sql
     if ($firstMigration) {
+        $query = sprintf(
+            'CREATE TABLE `versions` (
+                `id` int(11) NOT NULL,
+                `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+                `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci');
+        $conn->query($query);
         return $allFiles;
     }
 
@@ -57,10 +59,8 @@ function getMigrationFiles($conn) {
 
 // Накатываем миграцию файла
 function migrate($conn, $file) {
-    // Формируем команду выполнения mysql-запроса из внешнего файла
-    $command = sprintf('mysql -u%s -p%s -h %s -D %s < %s', DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, $file);
-    // Выполняем shell-скрипт
-    shell_exec($command);
+    $query = sprintf($file);
+    $conn->query($query);
 
     // Вытаскиваем имя файла, отбросив путь
     $baseName = basename($file);
