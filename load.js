@@ -22,6 +22,7 @@ function loadView(page) {
             content.innerHTML = text;
             const title = applyTitle();
             nodeScriptReplace(content);
+            processLocalLinks(content);
             history.replaceState(page, title, url)
         }).catch(reason => {
         status.innerText = "Произошла ошибка при загрузке данных";
@@ -32,34 +33,41 @@ function loadView(page) {
 
 //Нужны для выполнения скриптов в загруженном фрагменте
 function nodeScriptReplace(node) {
-    if (nodeScriptIs(node) === true) {
+    if (node.tagName === 'SCRIPT') {
         node.parentNode.replaceChild(nodeScriptClone(node), node);
     } else {
-        var i = 0;
-        var children = node.childNodes;
-        while (i < children.length) {
-            nodeScriptReplace(children[i++]);
+        const children = node.childNodes;
+        for (let i = 0; i < children.length; i++) {
+            nodeScriptReplace(children[i]);
         }
     }
-
     return node;
 }
 
-function nodeScriptIs(node) {
-    return node.tagName === 'SCRIPT';
-}
-
 function nodeScriptClone(node) {
-    var script = document.createElement("script");
+    const script = document.createElement("script");
     script.text = node.innerHTML;
-    for (var i = node.attributes.length - 1; i >= 0; i--) {
+    for (let i = 0; i < node.attributes.length; i++) {
         script.setAttribute(node.attributes[i].name, node.attributes[i].value);
     }
     return script;
 }
 
-window.addEventListener('popstate', function() {
+function processLocalLinks(node) {
+    const links = node.getElementsByTagName("a");
+    for (let i = 0; i < links.length; i++) {
+        if (links[i].origin === document.location.origin) {
+            links[i].addEventListener("click", ev => {
+                ev.preventDefault();
+                loadView(links[i].pathname);
+            });
+        }
+    }
+}
+
+window.addEventListener('popstate', function () {
     loadView(document.location.pathname);
 });
 
+processLocalLinks(document);
 loadView(document.location.pathname);
