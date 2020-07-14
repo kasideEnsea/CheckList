@@ -1,5 +1,5 @@
 <?php
-require('Database/config.php');
+require('database/config.php');
 function connectDB() {
     $errorMessage = 'Невозможно подключиться к серверу базы данных';
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
