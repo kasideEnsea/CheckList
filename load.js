@@ -1,4 +1,3 @@
-const status = document.getElementById("status");
 const content = document.getElementById("content");
 
 //Заменяет текущий заголовок на новый из загруженного фразмента
@@ -13,19 +12,17 @@ function applyTitle() {
 
 //Загрузка и подстановка загруженных страниц
 function loadView(page) {
-    status.innerText = "Загрузка...";
     const url = document.location.origin + page;
     fetch("/view" + page)
         .then(value => value.text())
         .then(text => {
-            status.innerText = "Загружено";
             content.innerHTML = text;
             const title = applyTitle();
             nodeScriptReplace(content);
             processLocalLinks(content);
+            updateHeader();
             history.replaceState(page, title, url)
         }).catch(reason => {
-        status.innerText = "Произошла ошибка при загрузке данных";
         console.error(reason);
     });
     return false;
@@ -59,7 +56,7 @@ function processLocalLinks(node) {
         if (links[i].origin === document.location.origin) {
             links[i].addEventListener("click", ev => {
                 ev.preventDefault();
-                loadView(links[i].pathname);
+                loadView(links[i].pathname + links[i].search);
             });
         }
     }
