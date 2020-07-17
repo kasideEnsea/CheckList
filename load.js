@@ -11,17 +11,21 @@ function applyTitle() {
 }
 
 //Загрузка и подстановка загруженных страниц
-function loadView(page) {
+function loadView(page, data) {
     const url = document.location.origin + page;
-    fetch("/view" + page)
+    fetch("/view" + page, data ? {
+        body: data,
+        method: 'post'
+    } : undefined)
         .then(value => value.text())
         .then(text => {
             content.innerHTML = text;
             const title = applyTitle();
+            history.replaceState(page, title, url)
             nodeScriptReplace(content);
             processLocalLinks(content);
+            processLocalForms(content);
             updateHeader();
-            history.replaceState(page, title, url)
         }).catch(reason => {
         console.error(reason);
     });
@@ -62,9 +66,32 @@ function processLocalLinks(node) {
     }
 }
 
+function processLocalForms(node) {
+    const forms = node.getElementsByTagName("form");
+    for (let i = 0; i < forms.length; i++) {
+        const form = forms[i];
+        const url = new URL(form.action);
+        if (url.origin === document.location.origin) {
+            form.addEventListener("submit", ev => {
+                ev.preventDefault();
+                let data;
+                if(form.encoding === "application/x-www-form-urlencoded") {
+                    data = new URLSearchParams();
+                    for (const pair of new FormData(form)) {
+                        data.append(pair[0], pair[1].toString());
+                    }
+                } else {
+                    data = new FormData(form);
+                }
+                loadView(url.pathname + url.search, data);
+            });
+        }
+    }
+}
+
 window.addEventListener('popstate', function () {
-    loadView(document.location.pathname);
+    loadView(document.location.pathname + document.location.search);
 });
 
 processLocalLinks(document);
-loadView(document.location.pathname);
+loadView(document.location.pathname + document.location.search);
