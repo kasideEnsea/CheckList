@@ -41,7 +41,7 @@ function getMigrationFiles($conn) {
                 `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
                 `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci');
-        $conn->query($query);
+        sql_query($conn, $query);
         return $allFiles;
     }
 
@@ -49,7 +49,7 @@ function getMigrationFiles($conn) {
     $versionsFiles = array();
     // Выбираем из таблицы versions все названия файлов
     $query = sprintf('select `name` from `%s`', DB_TABLE_VERSIONS);
-    $data = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
+    $data = sql_query($conn, $query)->fetch_all(MYSQLI_ASSOC);
     // Загоняем названия в массив $versionsFiles
     // Не забываем добавлять полный путь к файлу
     foreach ($data as $row) {
@@ -63,15 +63,25 @@ function getMigrationFiles($conn) {
 
 // Накатываем миграцию файла
 function migrate($conn, $file) {
-    $query = sprintf($file);
-    $conn->query($query);
+    // Формируем команду выполнения mysql-запроса из внешнего файла
+    $command = sprintf('mysql -u%s -p%s -h %s -D %s < %s', DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, $file);
+    // Выполняем shell-скрипт
+    shell_exec($command);
 
     // Вытаскиваем имя файла, отбросив путь
     $baseName = basename($file);
     // Формируем запрос для добавления миграции в таблицу versions
     $query = sprintf('insert into `%s` (`name`) values("%s")', DB_TABLE_VERSIONS, $baseName);
     // Выполняем запрос
-    $conn->query($query);
+    sql_query($conn, $query);
+}
+
+function sql_query($conn, $query){
+    $data = $conn->query($query);
+    if (!$data){
+        die(mysqli_error($conn));
+    }
+    return $conn->query($query);
 }
 
 
