@@ -7,20 +7,6 @@ if (file_exists($cf)) {
 DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_TABLE_VERSIONS");
 }
 
-function connectDB() {
-    $errorMessage = 'Невозможно подключиться к серверу базы данных';
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    if (!$conn)
-        throw new Exception($errorMessage);
-    else {
-        $query = $conn->query('set names utf8');
-        if (!$query)
-            throw new Exception($errorMessage);
-        else
-            return $conn;
-    }
-}
-
 
 // Получаем список файлов для миграций
 function getMigrationFiles($conn) {
@@ -42,7 +28,7 @@ function getMigrationFiles($conn) {
                 `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
                 `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci');
-        sql_query($conn, $query);
+        $conn->query($query);
         return $allFiles;
     }
 
@@ -50,7 +36,7 @@ function getMigrationFiles($conn) {
     $versionsFiles = array();
     // Выбираем из таблицы versions все названия файлов
     $query = sprintf('select `name` from `%s`', DB_TABLE_VERSIONS);
-    $data = sql_query($conn, $query)->fetch_all(MYSQLI_ASSOC);
+    $data = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
     // Загоняем названия в массив $versionsFiles
     // Не забываем добавлять полный путь к файлу
     foreach ($data as $row) {
@@ -63,7 +49,8 @@ function getMigrationFiles($conn) {
 
 
 // Накатываем миграцию файла
-function migrate($conn, $file) {
+function migrate($conn, $file)
+{
     // Формируем команду выполнения mysql-запроса из внешнего файла
     $command = sprintf('mysql -u%s -p%s -h %s -D %s < %s', DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, $file);
     // Выполняем shell-скрипт
@@ -74,22 +61,14 @@ function migrate($conn, $file) {
     // Формируем запрос для добавления миграции в таблицу versions
     $query = sprintf('insert into `%s` (`name`) values("%s")', DB_TABLE_VERSIONS, $baseName);
     // Выполняем запрос
-    sql_query($conn, $query);
-}
-
-function sql_query($conn, $query){
-    $data = $conn->query($query);
-    if (!$data){
-        die(mysqli_error($conn));
-    }
-    return $conn->query($query);
+    $conn->query($conn, $query);
 }
 
 
 // Стартуем
 
 // Подключаемся к базе
-$conn = connectDB();
+$conn = Connection::getInstance();
 
 // Получаем список файлов для миграций за исключением тех, которые уже есть в таблице versions
 $files = getMigrationFiles($conn);

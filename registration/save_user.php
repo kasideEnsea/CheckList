@@ -40,7 +40,7 @@ $password = htmlspecialchars($password);
 $login = trim($login);
 $password = trim($password);
 
-$conn = connectDB();
+$conn = Connection::getInstance();
 
 $query = sprintf("SELECT id FROM users WHERE login='$login'");
 
