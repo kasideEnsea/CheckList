@@ -37,7 +37,7 @@ if (empty($login) or empty($password) or empty($name))
 {
     exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
 }
-//!!!хз, нужно ли это
+
 $login = stripslashes($login);
 $login = htmlspecialchars($login);
 $password = stripslashes($password);
@@ -55,7 +55,7 @@ $query = sprintf("SELECT id FROM users WHERE login='$login'");
 
 $myrow = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 
-if (!empty($myrow['id'])) {
+if (count($myrow) != 0) {
     exit ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
 }
 $query = sprintf("ISERT INTO users (login, password) VALUES('$login', '$password')");

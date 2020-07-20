@@ -3,7 +3,7 @@ class Connection{
     private static $instance = null;
     private $connection;
     public function __construct() {
-        $errorMessage = 'Невозможно подключиться к серверу базы данных';
+        $errorMessage = "You can't connect to database";
         $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
         if (!$this->connection){
             throw new Exception($errorMessage);
