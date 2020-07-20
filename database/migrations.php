@@ -1,4 +1,5 @@
 <?php
+require('../database/сonnection.php');
 $cf = $_SERVER['DOCUMENT_ROOT']."/database/config.php";
 if (file_exists($cf)) {
     require($cf);
