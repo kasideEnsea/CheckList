@@ -26,8 +26,14 @@ if (isset($_POST['password'])) {
         unset($password);
     }
 }
+if (isset($_POST['name'])) {
+    $name = $_POST['name'];
+    if ($name == '') {
+        unset($name);
+    }
+}
 
-if (empty($login) or empty($password))
+if (empty($login) or empty($password) or empty($name))
 {
     exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
 }
@@ -36,9 +42,12 @@ $login = stripslashes($login);
 $login = htmlspecialchars($login);
 $password = stripslashes($password);
 $password = htmlspecialchars($password);
+$name = stripslashes($name);
+$name = htmlspecialchars($name);
 
 $login = trim($login);
 $password = trim($password);
+$name = trim($name);
 
 $conn = Connection::getInstance();
 

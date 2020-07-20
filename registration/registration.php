@@ -7,14 +7,19 @@
     <form action="save_user.php" method="post">
     <!--**** save_user.php - это адрес обработчика.  То есть, после нажатия на кнопку "Зарегистрироваться", данные из полей  отправятся на страничку save_user.php методом "post" ***** -->
 <p>
+    <label>Ваше имя:<br></label>
+    <input name="name" type="text" size="50" maxlength="50">
+</p>
+<p>
     <label>Ваш логин:<br></label>
     <input name="login" type="text" size="15" maxlength="15">
-    </p>
+</p>
+
 <!--**** В текстовое поле (name="login" type="text") пользователь вводит свой логин ***** -->
 <p>
     <label>Ваш пароль:<br></label>
     <input name="password" type="password" size="15" maxlength="15">
-    </p>
+</p>
 <!--**** В поле для паролей (name="password" type="password") пользователь вводит свой пароль ***** -->
 <p>
     <input type="submit" name="submit" value="Зарегистрироваться">
