@@ -31,7 +31,7 @@
     <input type="submit" name="submit" value="Войти">
 
 <br>
-<a href="reg.php">Зарегистрироваться</a>
+<a href="registration.php">Зарегистрироваться</a>
     </p></form>
     <br>
     <form action="logout.php" method="post">
