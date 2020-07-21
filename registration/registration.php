@@ -25,5 +25,3 @@
     <input type="submit" name="submit" value="Зарегистрироваться">
 <!--**** Кнопочка (type="submit") отправляет данные на страничку save_user.php ***** -->
 </p></form>
-    </body>
-    </>
