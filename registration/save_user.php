@@ -1,18 +1,6 @@
 <?php
-require('database/config.php');
-function connectDB() {
-    $errorMessage = 'Невозможно подключиться к серверу базы данных';
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
-    if (!$conn)
-        throw new Exception($errorMessage);
-    else {
-        $query = $conn->query('set names utf8');
-        if (!$query)
-            throw new Exception($errorMessage);
-        else
-            return $conn;
-    }
-}
+require('../database/config.php');
+require ('../database/dao.php');
 
 if (isset($_POST['login'])) {
     $login = $_POST['login'];
@@ -51,14 +39,14 @@ $name = trim($name);
 
 $conn = Connection::getInstance();
 
-$query = sprintf("SELECT id FROM users WHERE login='$login'");
+$query = sprintf("SELECT id FROM user WHERE login='$login'");
 
 $myrow = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 
 if (count($myrow) != 0) {
     exit ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
 }
-$query = sprintf("ISERT INTO users (login, password) VALUES('$login', '$password')");
+$query = sprintf("INSERT INTO user (login, password, name, deleted) VALUES('$login', '$password', '$name', false)");
 $result2 = $conn->query($query);
 
 if ($result2 == 'TRUE') {
