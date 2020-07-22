@@ -38,6 +38,13 @@ else {
     if ($myrow['password']==$password) {
         $_SESSION['login']=$myrow['login'];
         $_SESSION['id']=$myrow['id'];
+        $_SESSION['role']=$myrow['role'];
+        ?>
+        <script>
+            localStorage.setItem('login', '<?=$myrow['login']?>')
+            localStorage.setItem('role', '<?=$myrow['role']?>')
+        </script>
+        <?
         echo "Вы успешно вошли на сайт! <a href='login.php'>Главная страница</a>";
     }
     else {
