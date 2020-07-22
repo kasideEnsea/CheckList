@@ -1,6 +1,5 @@
 <?php
-require('../database/config.php');
-require ('../database/dao.php');
+require($_SERVER['DOCUMENT_ROOT'].'/database/сonnection.php');
 
 if (isset($_POST['login'])) {
     $login = $_POST['login'];
@@ -26,18 +25,16 @@ if (empty($login) or empty($password) or empty($name))
     exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
 }
 
-$login = stripslashes($login);
+$conn = Connection::getInstance();
+
+$login = $conn->escape_string($login);
 $login = htmlspecialchars($login);
-$password = stripslashes($password);
-$password = htmlspecialchars($password);
-$name = stripslashes($name);
+$name = $conn->escape_string($name);
 $name = htmlspecialchars($name);
 
 $login = trim($login);
 $password = trim($password);
 $name = trim($name);
-
-$conn = Connection::getInstance();
 
 $query = sprintf("SELECT id FROM user WHERE login='$login'");
 
@@ -46,6 +43,7 @@ $myrow = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 if (count($myrow) != 0) {
     exit ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
 }
+$password = sha1($password);
 $query = sprintf("INSERT INTO user (login, password, name, deleted) VALUES('$login', '$password', '$name', false)");
 $result2 = $conn->query($query);
 

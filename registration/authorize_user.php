@@ -1,6 +1,5 @@
 <?php
-session_start();//  вся процедура работает на сессиях. Именно в ней хранятся данные  пользователя, пока он находится на сайте. Очень важно запустить их в  самом начале странички!!!
-require('../database/config.php');
+session_start();
 require ('../database/сonnection.php');
 
 if (isset($_POST['login'])) {
@@ -20,28 +19,25 @@ if (empty($login) or empty($password))
 {
     exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
 }
+$conn = Connection::getInstance();
 
-$login = stripslashes($login);
+$login = $conn->escape_string($login);
 $login = htmlspecialchars($login);
-$password = stripslashes($password);
-$password = htmlspecialchars($password);
 
 $login = trim($login);
 $password = trim($password);
 
-$conn = Connection::getInstance();
-
-$result = $conn->query("SELECT * FROM user WHERE login='$login'"); //извлекаем из базы все данные о пользователе с введенным логином
+$result = $conn->query("SELECT * FROM user WHERE login='$login'");
 $myrow = mysqli_fetch_array($result);
 if (count($myrow) == 0)
 {
     exit ("Извините, введённый вами login неверный.");
 }
 else {
+    $password = sha1($password);
     if ($myrow['password']==$password) {
-        //если пароли совпадают, то запускаем пользователю сессию! Можете его поздравить, он вошел!
         $_SESSION['login']=$myrow['login'];
-        $_SESSION['id']=$myrow['id'];//эти данные очень часто используются, вот их и будет "носить с собой" вошедший пользователь
+        $_SESSION['id']=$myrow['id'];
         echo "Вы успешно вошли на сайт! <a href='login.php'>Главная страница</a>";
     }
     else {
