@@ -1,13 +1,5 @@
 <?php
-require('../database/сonnection.php');
-$cf = $_SERVER['DOCUMENT_ROOT']."/database/config.php";
-if (file_exists($cf)) {
-    require($cf);
-} else {
-    die("Для корректной работы нужно создать конфигурационный файл config.php со следующими константами:</br>
-DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_TABLE_VERSIONS");
-}
-
+require($_SERVER['DOCUMENT_ROOT'].'/database/сonnection.php');
 
 // Получаем список файлов для миграций
 function getMigrationFiles($conn) {
@@ -62,7 +54,7 @@ function migrate($conn, $file)
     // Формируем запрос для добавления миграции в таблицу versions
     $query = sprintf('insert into `%s` (`name`) values("%s")', DB_TABLE_VERSIONS, $baseName);
     // Выполняем запрос
-    $conn->query($conn, $query);
+    $conn->query($query);
 }
 
 

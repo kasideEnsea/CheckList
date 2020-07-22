@@ -1,8 +1,8 @@
 <?php
-require('сonnection.php');
+require($_SERVER['DOCUMENT_ROOT']."/database/сonnection.php");
 class Object {
-    private $table;
-    private $connection;
+    protected $table;
+    protected $connection;
 
     public function __construct($table) {
         $this->setTable($table);

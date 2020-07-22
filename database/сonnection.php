@@ -1,4 +1,12 @@
 <?php
+$cf = $_SERVER['DOCUMENT_ROOT']."/database/config.php";
+if (file_exists($cf)) {
+    require($cf);
+} else {
+    die("Для корректной работы нужно создать конфигурационный файл config.php со следующими константами:</br>
+DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_TABLE_VERSIONS");
+}
+
 class Connection{
     private static $instance = null;
     private $connection;
