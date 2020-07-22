@@ -23,19 +23,37 @@ class Object {
         return $this->connection->query('SELECT * FROM ' . $this->table . ' WHERE id = ' . $id)->fetch_object();
     }
 
+    public function insert($data) {
+        $callback = function ($value) {
+            if($value)
+                return '\''.$this->connection->escape_string($value).'\'';
+            return "NULL";
+        };
+        $keys = join(", ", array_keys($data));
+        $values = array_map($callback, array_values($data));
+        $values = join(", ", $values);
+        $sql = "INSERT INTO `$this->table` ($keys) VALUES ($values)";
+        $this->connection->query($sql);
+    }
+
     public function updateById($set, $id){
-        $string = '';
-        foreach ($set as $key => $value) {
-            if ($string != ''){
-                $string .= ',';
-            }
-            $string .= " " . $key . "='" . $value . "'";
-        }
-        echo ('UPDATE ' . $this->table . ' SET ' . $string . ' WHERE id = ' . $id);
+        $string = self::pack_object($set);
         $this->connection->query('UPDATE ' . $this->table . ' SET ' . $string . ' WHERE id = ' . $id);
     }
 
     public function deleteById($id) {
         $this->connection->query('DELETE FROM ' . $this->table . ' WHERE id = ' . $id);
+    }
+
+    public static function pack_object($set)
+    {
+        $string = '';
+        foreach ($set as $key => $value) {
+            if ($string != '') {
+                $string .= ',';
+            }
+            $string .= " " . $key . "='" . $value . "'";
+        }
+        return $string;
     }
 }

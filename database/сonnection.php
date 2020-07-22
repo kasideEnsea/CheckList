@@ -35,4 +35,9 @@ class Connection{
         }
         return $data;
     }
+
+    public function escape_string($value)
+    {
+        return $this->connection->escape_string($value);
+    }
 }
