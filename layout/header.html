@@ -22,8 +22,13 @@
         let guestHeader = document.getElementById("guestHeader");
         let userHeader = document.getElementById("userHeader");
 
+        function isAuthorized() {
+            return document.cookie.indexOf("PHPSESSID") >= 0
+                && localStorage.getItem('login');
+        }
+
         function updateHeader() {
-            if (!localStorage.getItem('login')) {
+            if (!isAuthorized()) {
                 //Using !important to override Bootstrap styles
                 userHeader.setAttribute("style", "display: none !important");
                 guestHeader.setAttribute("style", "");

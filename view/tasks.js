@@ -15,21 +15,34 @@ function createTree(dataNode, DOMParent, level) {
         const description = document.createElement("span");
         textDiv.appendChild(description);
         description.innerText = value.description;
+        addCheckbox(textDiv, value.id, value.done);
 
         const actions = document.createElement("div");
         div.appendChild(actions);
-        addMenuListener(description, textDiv, actions, value.id)
+        addMenuListener(description, textDiv, actions, value.id, value.done)
 
         createTree(value.children, li, level + 1)
     }
 }
 
-function addMenuListener(node, textDiv, actions, id) {
+function addCheckbox(textDiv, id, done) {
+    const checkbox = document.createElement("input");
+    textDiv.appendChild(checkbox);
+    checkbox.type = "checkbox";
+    checkbox.checked = done > 0;
+    checkbox.addEventListener("change", () => {
+        if (!showTasks(setTaskDone(id, !!checkbox.checked)))
+            console.log(false);
+        checkbox.checked = done > 0;
+    })
+}
+
+function addMenuListener(node, textDiv, actions, id, done) {
     node.addEventListener("click", () => {
-        if (textDiv.getElementsByTagName('input').length)
+        if (textDiv.firstChild.tagName === 'INPUT')
             return
         if (!actions.childElementCount)
-            showActions(textDiv, actions, id)
+            showActions(textDiv, actions, id, done)
         else
             actions.innerHTML = "";
     })
@@ -40,7 +53,7 @@ function processAddChild(node, id) {
     if (pp.lastElementChild.tagName !== "UL")
         pp.appendChild(document.createElement("ul"))
     const ul = pp.lastElementChild;
-    if (ul.lastElementChild && ul.lastElementChild.getElementsByTagName("input").length)
+    if (ul.lastElementChild && ul.lastElementChild.firstChild.tagName === 'INPUT')
         return;
     const li = document.createElement("li");
     ul.appendChild(li);
@@ -49,13 +62,13 @@ function processAddChild(node, id) {
     })
 }
 
-function showActions(textNode, node, id) {
+function showActions(textNode, node, id, done) {
     node.innerHTML = "";
     const editlink = document.createElement("span");
     node.appendChild(editlink);
     editlink.innerText = "Изменить ";
     editlink.classList.add("btn-link");
-    editlink.addEventListener("click", () => processEdit(textNode, id))
+    editlink.addEventListener("click", () => processEdit(textNode, id, done))
 
     const removelink = document.createElement("span");
     node.appendChild(removelink);
@@ -98,18 +111,19 @@ function addInput(node, value, callback, cancelCallback) {
     }
 }
 
-function processEdit(editNode, id) {
-    if (editNode.getElementsByTagName('input').length)
+function processEdit(textDiv, id, done) {
+    if (textDiv.firstChild.tagName === 'INPUT')
         return;
-    const value = editNode.innerText;
-    editNode.innerText = '';
-    addInput(editNode, value, value => showTasks(editTask(id, value)), value => {
-        editNode.innerHTML = "";
+    const value = textDiv.getElementsByTagName("span")[0].innerText;
+    textDiv.innerText = '';
+    addInput(textDiv, value, value => showTasks(editTask(id, value)), (value, checked) => {
+        textDiv.innerHTML = "";
         const description = document.createElement("span");
-        editNode.appendChild(description);
+        textDiv.appendChild(description);
         description.innerText = value;
-        const actions = editNode.parentElement.lastElementChild
-        addMenuListener(description, editNode, actions, id);
+        addCheckbox(textDiv, id, done);
+        const actions = textDiv.parentElement.lastElementChild
+        addMenuListener(description, textDiv, actions, id, done);
     });
 }
 
@@ -168,4 +182,7 @@ function showTasks(promise) {
 
 task = document.getElementById("task");
 showTasks(fetch("/api/tasks.php"))
-addInput(document.getElementById("task-form"), "", value => showTasks(createTask(value)));
+
+taskForm = document.getElementById("task-form");
+taskForm.innerHTML = "";
+addInput(taskForm, "", value => showTasks(createTask(value)));

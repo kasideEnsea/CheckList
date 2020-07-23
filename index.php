@@ -7,8 +7,10 @@
           integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous"
 </head>
 <body>
-<?php include ('layout/header.html') ?>
-<div id="content" class="m-0"></div>
+<?php include('layout/header.html') ?>
+<div id="content" class="m-0">
+    <span class="text-center">Загрузка...</span>
+</div>
 <script src="/load.js">
 </script>
 </body>

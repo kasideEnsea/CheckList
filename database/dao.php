@@ -25,6 +25,8 @@ class Object {
 
     public function insert($data) {
         $callback = function ($value) {
+            if($value === false)
+                return 0;
             if($value)
                 return '\''.$this->connection->escape_string($value).'\'';
             return "NULL";
@@ -52,6 +54,8 @@ class Object {
             if ($string != '') {
                 $string .= ',';
             }
+            if($value === false)
+                $value = 0;
             $string .= " " . $key . "='" . $value . "'";
         }
         return $string;

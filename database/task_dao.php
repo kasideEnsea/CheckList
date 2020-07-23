@@ -29,13 +29,7 @@ class TaskDao extends Object
 
     public function updateByIdAndUserId($set, $id, $user_id)
     {
-        $string = '';
-        foreach ($set as $key => $value) {
-            if ($string != '') {
-                $string .= ',';
-            }
-            $string .= " " . $key . "='" . $value . "'";
-        }
+        $string = self::pack_object($set);
         $this->connection->query('UPDATE ' . $this->table . ' SET ' . $string . ' WHERE id = ' . $id
             . ' AND user_id = ' . $user_id);
     }
