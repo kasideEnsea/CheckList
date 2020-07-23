@@ -1,19 +1,13 @@
-<form method="post">
-    <p>
-        <label>Ваше имя:<br></label>
-        <input name="name" type="text" size="50" maxlength="50">
-    </p>
-    <p>
-        <label>Ваш логин:<br></label>
-        <input name="login" type="text" size="15" maxlength="15">
-    </p>
-    <p>
-        <label>Ваш пароль:<br></label>
-        <input name="password" type="password" size="15" maxlength="15">
-    </p>
-    <p>
-        <input type="submit" name="submit" value="Зарегистрироваться">
-    </p>
+<form class="form-signin">
+    <form method="post">
+        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+        <label for="inputName" class="sr-only">Имя</label>
+        <input name="name" type="text" class="form-control" placeholder="Имя" required autofocus>
+        <label for="inputLogin" class="sr-only">Логин</label>
+        <input name="login" type="text" class="form-control" placeholder="Логин" required autofocus>
+        <label for="inputPassword" class="sr-only">Пароль</label>
+        <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
 </form>
 
 <?php

@@ -1,6 +1,4 @@
 <?php
-switch ($_SERVER["QUERY_STRING"]) {
-    case "set":
         require ('../database/сonnection.php');
         session_start();
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -17,10 +15,6 @@ switch ($_SERVER["QUERY_STRING"]) {
             }
         }
 
-        if (empty($login) or empty($password))
-        {
-            exit ("Вы ввели не всю информацию, вернитесь назад и заполните все поля!");
-        }
         $conn = Connection::getInstance();
 
         $login = $conn->escape_string($login);
@@ -55,39 +49,14 @@ switch ($_SERVER["QUERY_STRING"]) {
         }
         }
         ?>
+
+    <form class="form-signin">
         <form method="post">
-            <p>
-                <label>Ваш логин:<br></label>
-                <input name="login" type="text" size="15" maxlength="15">
-            </p>
+            <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>
+            <label for="inputLogin" class="sr-only">Логин</label>
+            <input name="login" type="text" class="form-control" placeholder="Логин" required autofocus>
+            <label for="inputPassword" class="sr-only">Пароль</label>
+            <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
+    </form>
 
-            <p>
-                <label>Ваш пароль:<br></label>
-                <input name="password" type="password" size="15" maxlength="15">
-            </p>
-
-            <p>
-                <input type="submit" name="submit" value="Войти">
-            </p>
-            <br>
-        </form>
-        <?php
-        break;
-
-    case "unset":
-        session_start();
-        $_SESSION['login'] = '';
-        $_SESSION['id'] = '';
-        session_start();
-        setcookie(session_name(), "", -1, "/");
-        session_destroy();
-        session_write_close();
-        ?>
-        <script>
-            localStorage.setItem('login', "")
-            localStorage.setItem('role', "")
-        </script>
-        <?
-        echo '<h2 class="text-center">Вы вышли из системы</h2>';
-        break;
-}?>

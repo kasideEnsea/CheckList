@@ -1,4 +1,5 @@
 <div id="header">
+    <link rel="stylesheet" href="/view/style.css" type="text/css"/>
     <div class="d-flex flex-column flex-md-row align-items-center p-3 bg-white border-bottom box-shadow"
          id="guestHeader">
         <a class="h5 my-0 mr-md-auto font-weight-normal" href="/">Студенческий портал-трекер задач</a>
@@ -6,7 +7,7 @@
             <a class="p-2 text-dark" href="/about">О проекте</a>
             <a class="p-2 text-dark" href="/reg">Регистрация</a>
         </nav>
-        <a class="btn btn-outline-primary" href="/login?set">Войти</a>
+        <a class="btn btn-outline-primary" href="/login">Войти</a>
     </div>
     <div class="d-flex flex-column flex-md-row align-items-center p-3 bg-white border-bottom box-shadow"
          id="userHeader">
@@ -16,7 +17,7 @@
             <a class="p-2 text-dark" href="/tasks">Задачи</a>
             <a class="p-2 text-dark" href="/profile">Профиль</a>
         </nav>
-        <a class="btn btn-outline-primary" href="/login?unset">Выйти</a>
+        <a class="btn btn-outline-primary" href="/logout">Выйти</a>
     </div>
     <script>
         let guestHeader = document.getElementById("guestHeader");
