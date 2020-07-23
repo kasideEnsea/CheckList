@@ -6,6 +6,18 @@ if (isset($_REQUEST["name"])) {
     $_SESSION["name"] = htmlentities($_REQUEST["name"]);
 }
 
+if (isset($_SESSION["id"])){
+    if($_SESSION["role"] == "admin"){
+        echo ("<h2>Вы администратор</h2>");
+    }
+    else{
+        echo ("<h2>Вы юзер</h2>");
+    }
+}
+else{
+    echo ("<h2>Вы гость</h2>");
+}
+
 if (!isset($_SESSION["name"]) || strlen($_SESSION["name"]) == 0) {
     echo "<h1>Я не знаю, как вас зовут :-(</h1>";
 } else {

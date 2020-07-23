@@ -4,8 +4,9 @@
         <a class="h5 my-0 mr-md-auto font-weight-normal" href="/">Студенческий портал-трекер задач</a>
         <nav class="my-2 my-md-0 mr-md-3">
             <a class="p-2 text-dark" href="/about">О проекте</a>
+            <a class="p-2 text-dark" href="/reg">Регистрация</a>
         </nav>
-        <a class="btn btn-outline-primary" href="/fakelogin?set">Войти</a>
+        <a class="btn btn-outline-primary" href="/login?set">Войти</a>
     </div>
     <div class="d-flex flex-column flex-md-row align-items-center p-3 bg-white border-bottom box-shadow"
          id="userHeader">
@@ -15,14 +16,14 @@
             <a class="p-2 text-dark" href="/tasks">Задачи</a>
             <a class="p-2 text-dark" href="/profile">Профиль</a>
         </nav>
-        <a class="btn btn-outline-primary" href="/fakelogin?unset">Выйти</a>
+        <a class="btn btn-outline-primary" href="/login?unset">Выйти</a>
     </div>
     <script>
         let guestHeader = document.getElementById("guestHeader");
         let userHeader = document.getElementById("userHeader");
 
         function updateHeader() {
-            if (document.cookie.indexOf("PHPSESSID") < 0) {
+            if (!localStorage.getItem('login')) {
                 //Using !important to override Bootstrap styles
                 userHeader.setAttribute("style", "display: none !important");
                 guestHeader.setAttribute("style", "");
