@@ -36,6 +36,7 @@ class Object {
         $values = join(", ", $values);
         $sql = "INSERT INTO `$this->table` ($keys) VALUES ($values)";
         $this->connection->query($sql);
+        return $this->connection->insert_id;
     }
 
     public function updateById($set, $id){

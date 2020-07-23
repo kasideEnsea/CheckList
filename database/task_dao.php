@@ -14,23 +14,11 @@ class TaskDao extends Object
         return $this->connection->query($query)->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function getAllByUserIdAndParentId($user_id, $parent = 0)
-    {
-        $ps = $parent ? " = " . $parent : "IS NULL";
-        $query = sprintf('select * from `%s` where user_id = `%d` and parent %d', $this->table, $user_id, $ps);
-        return $this->connection->query($query)->fetch_all(MYSQLI_ASSOC);
-    }
-
-    public function getByIdAndUserId($id, $user_id)
-    {
-        return $this->connection->query('SELECT * FROM ' . $this->table . ' WHERE id = ' . $id
-            . ' AND user_id = ' . $user_id)->fetch_object();
-    }
-
     public function updateByIdAndUserId($set, $id, $user_id)
     {
         $string = self::pack_object($set);
         $this->connection->query('UPDATE ' . $this->table . ' SET ' . $string . ' WHERE id = ' . $id
             . ' AND user_id = ' . $user_id);
+        return $this->connection->affected_rows;
     }
 }

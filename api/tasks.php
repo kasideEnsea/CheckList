@@ -7,14 +7,16 @@ $req_user_id = isset($_GET['id']) ? $_GET['id'] : $my_user_id;
 
 require("../database/task_dao.php");
 require("../database/user_dao.php");
+require("../database/event_dao.php");
 $task_dao = new TaskDao();
 $user_dao = new UserDao();
+$event_dao = new EventDao();
 $user_id = $user_dao->getById($req_user_id)['id'];
 $username = $user_dao->getById($req_user_id)['name'];
 
 $myData = json_decode(file_get_contents('php://input'), true);
 if($req_user_id != $my_user_id) {
-    get_data_object($task_dao, $req_user_id, $user_id, $username);
+    print_data_object();
     exit();
 }
 switch ($_SERVER['REQUEST_METHOD']) {
@@ -22,44 +24,53 @@ switch ($_SERVER['REQUEST_METHOD']) {
         //Do nothing
         break;
     case 'POST':
-        //ToDo - Залогировать это событие
         $obj = array(
-            'id' => 0,
-            'user_id' => $_SESSION['id'],
+            'user_id' => $my_user_id,
             'description' => $myData['description'],
             'parent_id' => $myData['parent_id']
         );
-        $task_dao->insert($obj);
+        $id = $task_dao->insert($obj);
+        log_event($id, "created", $myData['comment'], null);
         break;
 
     case 'PUT':
-        $myData = json_decode(file_get_contents('php://input'), true);
         $obj = [];
         if (isset($myData['description'])) {
-            //ToDo - Залогировать это событие
             $obj['description'] = $myData['description'];
         }
         if (isset($myData['done'])) {
-            //ToDo - Залогировать это событие
             $obj['done'] = $myData['done'];
         }
-        $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
+        if(!count($obj))
+            return;
+        $old_data = $task_dao->getById($myData['id']);
+        $rows = $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
+        if($rows) {
+            if(isset($myData['description'])) {
+                log_event($myData['id'], "modified", $myData['comment'], $old_data['description']);
+            } if(isset($myData['done'])) {
+                $done = $myData['done'] ? "done" : "undone";
+                log_event($myData['id'], $done, $myData['comment'], null);
+            }
+        }
         break;
     case 'DELETE':
-        //ToDo - Залогировать это событие
-        $myData = json_decode(file_get_contents('php://input'), true);
         $obj = array(
             'deleted' => true
         );
-        $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
+        $rows = $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
+        if($rows) {
+            log_event($myData['id'], "deleted", $myData['comment'], null);
+        }
         break;
     default:
         http_send_status(405);
 }
-get_data_object($task_dao, $req_user_id, $user_id, $username);
+print_data_object();
 
-function get_data_object(TaskDao $task_dao, $req_user_id, $user_id, $username)
+function print_data_object()
 {
+    global $task_dao, $req_user_id, $user_id, $username;
     $data = $task_dao->getAllByUserIdNotDeleted($req_user_id);
     $dataObj = array(
         "user_id" => $user_id,
@@ -85,4 +96,17 @@ function data2tree($data, $parentId)
 function data2forest($data)
 {
     return data2tree($data, null);
+}
+
+function log_event($task_id, $type, $comment, $old_value) {
+    global $my_user_id, $event_dao;
+    $obj = array(
+        "user_id" => $my_user_id,
+        "task_id" => $task_id,
+        "type" => $type,
+        "comment" => $comment
+    );
+    if($old_value)
+        $obj['old_value'] = $old_value;
+    $event_dao->insert($obj);
 }

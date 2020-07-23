@@ -187,7 +187,6 @@ function showTasks(promise) {
             }
             if (!value.tasks.length) {
                 task.innerText = "Задач не найдено"
-                return;
             }
             tasks_editable = +localStorage.getItem('user_id') === +value.user_id;
             if(tasks_editable) {

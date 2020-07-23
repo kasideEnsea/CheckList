@@ -8,11 +8,12 @@
         <label for="inputPassword" class="sr-only">Пароль</label>
         <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>
-</form>
+    </form>
 
-<?php
+    <?php
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     require($_SERVER['DOCUMENT_ROOT'] . '/database/сonnection.php');
+    require($_SERVER['DOCUMENT_ROOT'] . '/database/event_dao.php');
 
     if (isset($_POST['login'])) {
         $login = $_POST['login'];
@@ -60,6 +61,12 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result2 = $conn->query($query);
 
     if ($result2 == 'TRUE') {
+            $eventDao = new EventDao();
+            $obj = array(
+                "user_id" => $conn->insert_id,
+                "type" => "registered",
+            );
+            $eventDao->insert($obj);
         h_die("Вы успешно зарегистрированы!");
     } else {
         h_die("Ошибка! Вы не зарегистрированы.");

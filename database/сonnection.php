@@ -10,6 +10,8 @@ DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, DB_TABLE_VERSIONS");
 class Connection{
     private static $instance = null;
     private $connection;
+    public $insert_id;
+    public $affected_rows;
     public function __construct() {
         $errorMessage = "You can't connect to database";
         $this->connection = new mysqli(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME);
@@ -33,6 +35,8 @@ class Connection{
         if (!$data){
             die(mysqli_error($this->connection));
         }
+        $this->insert_id = $this->connection->insert_id;
+        $this->affected_rows = $this->connection->affected_rows;
         return $data;
     }
 
