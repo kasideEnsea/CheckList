@@ -1,10 +1,10 @@
 <form class="form-signin">
     <form method="post">
-        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+        <h1 class="font-weight-normal">Регистрация</h1>
         <label for="inputName" class="sr-only">Имя</label>
-        <input name="name" type="text" class="form-control" placeholder="Имя" required autofocus>
+        <input name="name" type="text" class="form-control" id="inputName" placeholder="Имя" required autofocus>
         <label for="inputLogin" class="sr-only">Логин</label>
-        <input name="login" type="text" class="form-control" placeholder="Логин" required autofocus>
+        <input name="login" type="text" class="form-control" id="inputLogin" placeholder="Логин" required>
         <label for="inputPassword" class="sr-only">Пароль</label>
         <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Зарегистрироваться</button>

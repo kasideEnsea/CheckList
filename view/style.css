@@ -3,9 +3,18 @@
     max-width: 330px;
     padding: 15px;
     text-align: center;
-    margin: 0 auto;
-    margin-top: 100px;
+    margin: 100px auto 0;
 }
-button {
-        margin-top: 1.25em;
+
+.form-signin > * {
+    margin: 10px 0;
+}
+
+.form-signin > h1 {
+    margin-bottom: 30px;
+}
+
+.form-signin > button {
+    margin-top: 30px;
+
 }

@@ -50,13 +50,12 @@
         }
         ?>
 
-    <form class="form-signin">
-        <form method="post">
-            <h1 class="h3 mb-3 font-weight-normal">Авторизация</h1>
-            <label for="inputLogin" class="sr-only">Логин</label>
-            <input name="login" type="text" class="form-control" placeholder="Логин" required autofocus>
-            <label for="inputPassword" class="sr-only">Пароль</label>
-            <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
-            <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
-    </form>
+<form class="form-signin" method="post">
+        <h1 class="font-weight-normal">Авторизация</h1>
+        <label for="inputLogin" class="sr-only">Логин</label>
+        <input name="login" type="text" class="form-control" id="inputLogin" placeholder="Логин" required autofocus>
+        <label for="inputPassword" class="sr-only">Пароль</label>
+        <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
+</form>
 
