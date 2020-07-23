@@ -53,16 +53,21 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $myrow = $conn->query($query)->fetch_all(MYSQLI_ASSOC);
 
     if (count($myrow) != 0) {
-        exit ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
+        h_die ("Извините, введённый вами логин уже зарегистрирован. Введите другой логин.");
     }
     $password = sha1($password);
     $query = sprintf("INSERT INTO user (login, password, name, deleted) VALUES('$login', '$password', '$name', false)");
     $result2 = $conn->query($query);
 
     if ($result2 == 'TRUE') {
-        echo "Вы успешно зарегистрированы!";
+        h_die("Вы успешно зарегистрированы!");
     } else {
-        echo "Ошибка! Вы не зарегистрированы.";
+        h_die("Ошибка! Вы не зарегистрированы.");
     }
+}
+
+function h_die($err) {
+        echo '<h5 class="text-center">' . $err . '</h5>';
+        exit();
 }
 ?>

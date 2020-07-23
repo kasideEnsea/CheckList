@@ -1,7 +1,7 @@
 <?php
-        require ('../database/сonnection.php');
-        session_start();
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
+require ('../database/сonnection.php');
+session_start();
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
         if (isset($_POST['login'])) {
             $login = $_POST['login'];
             if ($login == '') {
@@ -27,7 +27,7 @@
         $myrow = mysqli_fetch_array($result);
         if (count($myrow) == 0)
         {
-            exit ("Извините, введённый вами login неверный.");
+            $err = "Извините, введённый вами логин неверный.";
         }
         else {
             $password = sha1($password);
@@ -42,13 +42,14 @@
                     loadView("/");
                 </script>
                 <?
+                exit();
             }
             else {
-                exit ("Извините, введённый вами пароль неверный.");
+                $err = "Извините, введённый вами пароль неверный.";
             }
         }
-        }
-        ?>
+}
+?>
 
 <form class="form-signin" method="post">
         <h1 class="font-weight-normal">Авторизация</h1>
@@ -58,4 +59,8 @@
         <input name="password" type="password" id="inputPassword" class="form-control" placeholder="Пароль" required>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
 </form>
+<?php if(isset($err))
+    echo '<h5 class="text-center">'.$err.'</h5>';
+?>
+
 
