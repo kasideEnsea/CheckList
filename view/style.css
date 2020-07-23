@@ -18,3 +18,23 @@
     margin-top: 30px;
 
 }
+
+.form-profile{
+    display: inline;
+}
+
+.form-profile > h4 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-profile > p {
+    border: 1px solid black;
+    padding: 5px;
+    margin-left: 215px;
+    margin-right: 50px;
+}
+
+.form-profile > img {
+    margin-top: 10px;
+}

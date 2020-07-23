@@ -12,3 +12,6 @@ session_write_close();
     localStorage.removeItem('role')
 </script>
 <h2 class="text-center">Вы вышли из системы</h2>
+<script>
+    setTimeout(() => loadView("/"), 1000);
+</script>
