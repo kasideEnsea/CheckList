@@ -17,9 +17,11 @@ function createTree(dataNode, DOMParent, level) {
         description.innerText = value.description;
         addCheckbox(textDiv, value.id, value.done);
 
-        const actions = document.createElement("div");
-        div.appendChild(actions);
-        addMenuListener(description, textDiv, actions, value.id, value.done)
+        if (tasks_editable) {
+            const actions = document.createElement("div");
+            div.appendChild(actions);
+            addMenuListener(description, textDiv, actions, value.id, value.done)
+        }
 
         createTree(value.children, li, level + 1)
     }
@@ -30,11 +32,15 @@ function addCheckbox(textDiv, id, done) {
     textDiv.appendChild(checkbox);
     checkbox.type = "checkbox";
     checkbox.checked = done > 0;
+    checkbox.disabled = !tasks_editable;
+    if (!tasks_editable)
+        return;
+
     checkbox.addEventListener("change", () => {
         if (!showTasks(setTaskDone(id, !!checkbox.checked)))
             console.log(false);
         checkbox.checked = done > 0;
-    })
+    });
 }
 
 function addMenuListener(node, textDiv, actions, id, done) {
@@ -152,11 +158,15 @@ function deleteTask(id) {
     return process('delete', {id: id});
 }
 
+function get_api() {
+    return "/api/tasks.php" + document.location.search;
+}
+
 function process(method, data) {
     data.comment = promptComment()
     if (data.comment === null)
         return;
-    return fetch("/api/tasks.php", {
+    return fetch(get_api(), {
         method: method,
         body: JSON.stringify(data)
     });
@@ -171,17 +181,31 @@ function showTasks(promise) {
         return;
     return promise.then(value => value.json())
         .then(value => {
-            if (!value) {
-                task.innerText = "Задач не найдено;"
+            if (!value.user_id) {
+                task.innerText = "Пользователь не найден"
                 return;
             }
+            if (!value.tasks.length) {
+                task.innerText = "Задач не найдено"
+                return;
+            }
+            tasks_editable = +localStorage.getItem('user_id') === +value.user_id;
+            if(tasks_editable) {
+                task_header.innerText="Мои задачи";
+            } else {
+                task_header.innerText="Задачи пользователя "+value.username;
+            }
+            task_edit.style.display = tasks_editable ? "" : "none";
             task.innerHTML = '';
-            createTree(value, task, 0);
+            createTree(value.tasks, task, 0);
         })
 }
 
+tasks_editable = false;
 task = document.getElementById("task");
-showTasks(fetch("/api/tasks.php"))
+task_header = document.getElementById("task-header");
+task_edit = document.getElementById("task-edit");
+showTasks(fetch(get_api()))
 
 taskForm = document.getElementById("task-form");
 taskForm.innerHTML = "";

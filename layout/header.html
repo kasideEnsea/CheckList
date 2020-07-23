@@ -25,7 +25,7 @@
 
         function isAuthorized() {
             return document.cookie.indexOf("PHPSESSID") >= 0
-                && localStorage.getItem('login');
+                && localStorage.getItem('user_id');
         }
 
         function updateHeader() {

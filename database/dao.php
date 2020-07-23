@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT']."/database/сonnection.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/database/сonnection.php");
 class Object {
     protected $table;
     protected $connection;
@@ -20,7 +20,7 @@ class Object {
     }
 
     public function getById($id) {
-        return $this->connection->query('SELECT * FROM ' . $this->table . ' WHERE id = ' . $id)->fetch_object();
+        return $this->connection->query('SELECT * FROM ' . $this->table . ' WHERE id = ' . $id)->fetch_assoc();
     }
 
     public function insert($data) {

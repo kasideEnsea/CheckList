@@ -2,12 +2,21 @@
 if (!isset($_COOKIE["PHPSESSID"]) || !session_start() || !isset($_SESSION['id']))
     die("Вы не авторизованы!");
 header('Content-Type: text/plain');
-$user_id = $_SESSION['id'];
+$my_user_id = $_SESSION['id'];
+$req_user_id = isset($_GET['id']) ? $_GET['id'] : $my_user_id;
 
 require("../database/task_dao.php");
-$dao = new TaskDao();
-$myData = json_decode(file_get_contents('php://input'), true);
+require("../database/user_dao.php");
+$task_dao = new TaskDao();
+$user_dao = new UserDao();
+$user_id = $user_dao->getById($req_user_id)['id'];
+$username = $user_dao->getById($req_user_id)['name'];
 
+$myData = json_decode(file_get_contents('php://input'), true);
+if($req_user_id != $my_user_id) {
+    get_data_object($task_dao, $req_user_id, $user_id, $username);
+    exit();
+}
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
         //Do nothing
@@ -20,7 +29,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             'description' => $myData['description'],
             'parent_id' => $myData['parent_id']
         );
-        $dao->insert($obj);
+        $task_dao->insert($obj);
         break;
 
     case 'PUT':
@@ -34,7 +43,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             //ToDo - Залогировать это событие
             $obj['done'] = $myData['done'];
         }
-        $dao->updateByIdAndUserId($obj, $myData['id'], $user_id);
+        $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
         break;
     case 'DELETE':
         //ToDo - Залогировать это событие
@@ -42,20 +51,22 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $obj = array(
             'deleted' => true
         );
-        $dao->updateByIdAndUserId($obj, $myData['id'], $user_id);
+        $task_dao->updateByIdAndUserId($obj, $myData['id'], $my_user_id);
         break;
     default:
         http_send_status(405);
 }
-$data = $dao->getAllByUserIdNotDeleted($user_id);
-echo json_encode(data2forest($data), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+get_data_object($task_dao, $req_user_id, $user_id, $username);
 
-function getById($data, $id)
+function get_data_object(TaskDao $task_dao, $req_user_id, $user_id, $username)
 {
-    foreach ($data as $value)
-        if ($value['id'] == $id)
-            return $value;
-    return null;
+    $data = $task_dao->getAllByUserIdNotDeleted($req_user_id);
+    $dataObj = array(
+        "user_id" => $user_id,
+        "username" => $username,
+        "tasks" => data2forest($data)
+    );
+    echo json_encode($dataObj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
 }
 
 function data2tree($data, $parentId)

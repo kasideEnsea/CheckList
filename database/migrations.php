@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT'].'/database/сonnection.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/database/сonnection.php');
 
 function getMigrationFiles($conn) {
     $sqlFolder = str_replace('\\', '/', realpath(dirname(__FILE__)) . '/');

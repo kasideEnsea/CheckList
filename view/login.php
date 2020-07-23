@@ -37,7 +37,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
                 $_SESSION['role']=$myrow['role'];
                 ?>
                 <script>
-                    localStorage.setItem('login', '<?=$myrow['login']?>')
+                    localStorage.setItem('user_id', '<?=$myrow['id']?>')
                     localStorage.setItem('role', '<?=$myrow['role']?>')
                     loadView("/");
                 </script>

@@ -1,5 +1,5 @@
 <?php
-require($_SERVER['DOCUMENT_ROOT']."/database/dao.php");
+require_once($_SERVER['DOCUMENT_ROOT']."/database/dao.php");
 
 class TaskDao extends Object
 {
