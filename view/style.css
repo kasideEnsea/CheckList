@@ -79,6 +79,14 @@ span.btn-link {
     text-decoration: underline;
 }
 
+#task li div:hover > span.btn-link {
+    text-decoration: none;
+}
+
+#task li div:hover > span.btn-link:hover {
+    text-decoration: underline;
+}
+
 .event {
     max-width: 600px;
     border-radius: 10px;
