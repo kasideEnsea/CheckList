@@ -185,10 +185,8 @@ function h_die($err)
 
     <?php
     require("../database/event_dao.php");
-    session_start();
     $object = new EventDao();
-    $id = $_SESSION['id'];
-    $data = $object->getLastDone($id);
+    $data = $object->getLastDone($req_user_id);
     $arr = [];
     foreach ($data as $value) {
         $arr[$value['date']] = $value['count'];
@@ -204,7 +202,8 @@ function h_die($err)
             $colorString .= "<td style=\"background-color: rgb(255, 255, 255);\" height = 40px></td>";
         } else {
             $value = $arr[date_format($lastDay, 'Y-m-d')];
-            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, " . getColor($value, $max) . ");\" height = 40px></td>";
+            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, " . getColor($value, $max)
+                . ");\" height = 40px title=\"$value\"'></td>";
         }
         $lastDay = date_modify($today, '+1 day');
     }
