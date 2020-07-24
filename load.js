@@ -11,7 +11,7 @@ function applyTitle() {
 }
 
 //Загрузка и подстановка загруженных страниц
-function loadView(page, data) {
+function loadView(page, data, preventPush = false) {
     const url = document.location.origin + page;
     fetch("/view" + page, data ? {
         body: data,
@@ -21,7 +21,8 @@ function loadView(page, data) {
         .then(text => {
             content.innerHTML = text;
             const title = applyTitle();
-            history.replaceState(page, title, url)
+            if(!preventPush)
+                history.pushState(page, title, url)
             nodeScriptReplace(content);
             processLocalLinks(content);
             processLocalForms(content);
@@ -90,7 +91,7 @@ function processLocalForms(node) {
 }
 
 window.addEventListener('popstate', function () {
-    loadView(document.location.pathname + document.location.search);
+    loadView(document.location.pathname + document.location.search, null, true);
 });
 
 processLocalLinks(document);
