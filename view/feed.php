@@ -22,12 +22,12 @@ function user_link($event)
 
 function task_link($event)
 {
-    return '<a href="/tasks?id=' . $event['user_id'] . '">' . $event['description'] . '</a>';
+    return '<a href="/tasks?id=' . $event['user_id'] . '">' . htmlentities($event['description']) . '</a>';
 }
 
 function old_value_link($event)
 {
-    return '<a href="/tasks?id=' . $event['user_id'] . '">' . $event['old_value'] . '</a>';
+    return '<a href="/tasks?id=' . $event['user_id'] . '">' . htmlentities($event['old_value']) . '</a>';
 }
 
 ?>
@@ -81,7 +81,7 @@ function old_value_link($event)
         endswitch;
         if ($event['comment']) {
             echo ":\n";
-            echo '<div class="comment">' . $event['comment'] . '</div>';
+            echo '<div class="comment">' . htmlentities($event['comment']) . '</div>';
         }
         if($is_admin) {
             echo '<div class="w-100"><script>addAdminButton(' . $event['id'] . ')</script></div>';
