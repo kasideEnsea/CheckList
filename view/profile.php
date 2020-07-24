@@ -4,7 +4,12 @@ session_start();
 $user = new Object('user');
 $user_data = $user->getById($_SESSION['id']);
 $name = $user_data['name'];
-$img = "/user_images/".$user_data['avatar'];
+if (!$user_data['avatar']) {
+    $img = "/images/corgi.jpg";
+} else {
+    $img = "/user_images/".$user_data['avatar'];
+}
+
 $login = $user_data['login'];
 $about = $user_data['about'];
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,10 +31,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($newname);
         }
     }
-    if (isset($_FILES['userfile'])) {
+    if (isset($_FILES['userfile']) and $_FILES['userfile']['tmp_name']!="") {
         $uploaddir = $_SERVER['DOCUMENT_ROOT']."/user_images/";
         $filename = $login."_".date("MdYhisA");
         $err = False;
+        echo (mime_content_type($_FILES['userfile']['tmp_name']));
         switch (mime_content_type($_FILES['userfile']['tmp_name'])){
             case "image/jpg": {
                 $filename .= ".jpg";
@@ -126,12 +132,7 @@ function h_die($err) {
 </script>
 
 <div class="mx-auto text form-profile" style="max-width: 800px;">
-    <img src=
-         <? if(!$img){
-            echo "/images/corgi.jpg";
-         }else {
-             echo $img;
-         }?>
+    <img src=<?echo ($img)?>
          width="200px" align="left" border="0" hspace="2%" vspace="2%" />
     <h4 class="font-weight-normal">
         <?echo("Имя: ".$name)?>
