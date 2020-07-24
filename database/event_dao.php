@@ -19,4 +19,12 @@ ORDER BY ev.id DESC
 LIMIT " . MAX_COUNT;
         return $this->connection->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
+
+    public function getLastDone($id){
+        $sql = sprintf("SELECT date, count(date) as count
+        FROM `event` 
+        WHERE user_id = '$id' and type = 'done' and DATEDIFF('2020-07-24', date)<=7
+        group by date");
+        return $this->connection->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
 }

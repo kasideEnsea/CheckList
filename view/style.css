@@ -28,25 +28,10 @@
     margin-bottom: 20px;
 }
 
-#profileTable, #main-cell {
-    width: 100%;
-}
-
-#profileTable td > p {
+.form-profile > p {
     max-width: 500px;
     border: 1px solid black;
     padding: 5px;
-    margin: 20px 0;
-}
-
-#profileTable td {
-    vertical-align: top;
-    padding: 20px;
-}
-
-#edit_profile {
-    max-width: 600px;
-    border: solid black 1px;
-    margin: 20px;
-    padding: 20px;
+    margin-left: 270px;
+    margin-right: 50px;
 }
