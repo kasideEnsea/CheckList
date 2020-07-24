@@ -218,7 +218,9 @@ function h_die($err)
     ?>
     <div class="mx-auto text" style="max-width: 600px; margin: 20px">
         <table border="1">
-            <caption>Мои успехи за последние 7 дней</caption>
+            <caption>
+                <?= ($my_user_id == $req_user_id ? "Мои успехи" : "Успехи пользователя") . " за последние 7 дней" ?>
+            </caption>
             <? echo $dataString;
             echo $colorString ?>
         </table>
