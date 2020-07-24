@@ -67,6 +67,18 @@ span.btn-link {
     width: 300px;
 }
 
+#task, #task li div {
+    display: table;
+}
+
+#task li div > span {
+    cursor: pointer;
+}
+
+#task li div:hover > span {
+    text-decoration: underline;
+}
+
 .event {
     max-width: 600px;
     border-radius: 10px;
