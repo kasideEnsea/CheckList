@@ -16,6 +16,7 @@ u.name, t.description, ev.old_value, ev.created, (t.parent_id IS NULL) as is_che
 FROM `event` ev
 LEFT JOIN `user` u ON ev.user_id = u.id
 LEFT JOIN `task` t ON ev.task_id = t.id
+WHERE ev.deleted = FALSE
 ORDER BY ev.id DESC
 LIMIT " . MAX_COUNT;
         return $this->connection->query($sql)->fetch_all(MYSQLI_ASSOC);

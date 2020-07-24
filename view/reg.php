@@ -61,6 +61,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result2 = $conn->query($query);
 
     if ($result2 == 'TRUE') {
+        if($conn->insert_id == 1) {
+            $query = sprintf("UPDATE user SET role = 'admin' WHERE id=1");
+        }
             $eventDao = new EventDao();
             $obj = array(
                 "user_id" => $conn->insert_id,

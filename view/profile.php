@@ -197,14 +197,14 @@ function h_die($err)
     $lastDay = date_modify($today, '-6 day');
     $dataString = "<tr>";
     $colorString = "<tr>";
-    $max = max($arr);
+    $max = count($arr) ? max($arr) : 1;
     for ($i = 0; $i < 7; $i++) {
         $dataString .= "<td>" . date_format($lastDay, 'Y-m-d') . "</td>";
         if (!array_key_exists(date_format($lastDay, 'Y-m-d'), $arr)) {
             $colorString .= "<td style=\"background-color: rgb(255, 255, 255);\" height = 40px></td>";
         } else {
             $value = $arr[date_format($lastDay, 'Y-m-d')];
-            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, " . getColor($value, $max) . ");\" height = 40px>$a</td>";
+            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, " . getColor($value, $max) . ");\" height = 40px></td>";
         }
         $lastDay = date_modify($today, '+1 day');
     }

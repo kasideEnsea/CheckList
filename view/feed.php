@@ -3,9 +3,17 @@ if (!isset($_COOKIE["PHPSESSID"]) || !session_start() || !isset($_SESSION['id'])
     die("Вы не авторизованы!");
 require "../database/event_dao.php";
 $event_dao = new EventDao();
-$data = $event_dao->getFeed();
+$is_admin = strtolower($_SESSION['role']) == "admin";
 
-//ToDo - process remove action
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && $is_admin) {
+    $myData = json_decode(file_get_contents('php://input'), true);
+    if (isset($myData['id'])) {
+        $obj = array('deleted' => true);
+        $event_dao->updateById($obj, $myData['id']);
+    }
+}
+
+$data = $event_dao->getFeed();
 
 function user_link($event)
 {
@@ -23,9 +31,10 @@ function old_value_link($event)
 }
 
 ?>
+<?php if($is_admin): ?>
 <script>
     function deleteEvent(id) {
-        if(!confirm("Вы действительно хотите удалить это событие?"))
+        if (!confirm("Вы действительно хотите удалить это событие?"))
             return;
         loadView(document.location.pathname, JSON.stringify({id: id}));
     }
@@ -40,7 +49,9 @@ function old_value_link($event)
         });
     }
 </script>
+<? endif; ?>
 <div class="mx-auto text" style="max-width: 800px;">
+    <h1 class="text-center">Лента событий</h1>
     <?php foreach ($data as $event):
         echo sprintf('<div class="event">Пользователь %s ', user_link($event));
         switch ($event['type']):
@@ -72,7 +83,9 @@ function old_value_link($event)
             echo ":\n";
             echo '<div class="comment">' . $event['comment'] . '</div>';
         }
-        /*echo '<div class="w-100"><script>addAdminButton('.$event['id'].')</script></div>';*/
+        if($is_admin) {
+            echo '<div class="w-100"><script>addAdminButton(' . $event['id'] . ')</script></div>';
+        }
         echo "</div>\n";
     endforeach; ?>
 </div>
