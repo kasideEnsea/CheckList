@@ -4,7 +4,7 @@ session_start();
 $user = new Object('user');
 $user_data = $user->getById($_SESSION['id']);
 $name = $user_data['name'];
-$img = $user_data['avatar'];
+$img = "/user_images/".$user_data['avatar'];
 $login = $user_data['login'];
 $about = $user_data['about'];
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -26,16 +26,44 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
             unset($newname);
         }
     }
-    if (isset($_POST['userfile'])) {
+    if (isset($_FILES['userfile'])) {
         $uploaddir = $_SERVER['DOCUMENT_ROOT']."/user_images/";
-        $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
-        if (!file_exists($uploaddir)){
-            mkdir($uploaddir, 0700);
+        $filename = $login."_".date("MdYhisA");
+        $err = False;
+        switch (mime_content_type($_FILES['userfile']['tmp_name'])){
+            case "image/jpg": {
+                $filename .= ".jpg";
+                break;
+            }
+            case "image/jpeg": {
+                $filename .= ".jpeg";
+                break;
+            }
+            case "image/png": {
+                $filename .= ".png";
+                break;
+            }
+            default:{
+                echo ("<script> alert('Неверный тип файла')</script>");
+                $err = True;
+            }
         }
-        if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
-            echo ("<script> alert('Файл корректен и был успешно загружен')</script>");
-        } else {
-            echo ("<script> alert('Возможная атака с помощью файловой загрузки!')</script>");
+        if(!$err) {
+            $uploadfile = $uploaddir . $filename;
+            if (!file_exists($uploaddir)) {
+                mkdir($uploaddir, 0700);
+            }
+            if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
+                echo("<script> alert('Файл корректен и был успешно загружен')</script>");
+                $array = array(
+                    "avatar" => $filename,
+                );
+                $user->updateById($array, $_SESSION['id']);
+                $img = "/user_images/".$filename;
+
+            } else {
+                echo("<script> alert('Возможная атака с помощью файловой загрузки!')</script>");
+            }
         }
     }
 
@@ -90,7 +118,7 @@ function h_die($err) {
 }
 ?>
 <script>
-    const a = document.getElementById("edit_profile");
+    a = document.getElementById("edit_profile");
     a.style.display = "None";
     function hideEditProfile() {
         a.style.display = "";
@@ -98,7 +126,6 @@ function h_die($err) {
 </script>
 
 <div class="mx-auto text form-profile" style="max-width: 800px;">
-
     <img src=
          <? if(!$img){
             echo "/images/corgi.jpg";
