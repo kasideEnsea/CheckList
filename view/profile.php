@@ -1,18 +1,20 @@
 <?php
-require ('../database/dao.php');
+if (!isset($_COOKIE["PHPSESSID"]) || !session_start() || !isset($_SESSION['id']))
+    die("Вы не авторизованы!");
+$my_user_id = $_SESSION['id'];
+$req_user_id = isset($_GET['id']) ? $_GET['id'] : $my_user_id;
+
+require('../database/dao.php');
 session_start();
 $user = new Object('user');
-$user_data = $user->getById($_SESSION['id']);
+$user_data = $user->getById($req_user_id);
+if(!$user_data)
+    die('<h2 class="text-center">Пользователь не найден</h2>');
 $name = $user_data['name'];
-if (!$user_data['avatar']) {
-    $img = "/images/corgi.jpg";
-} else {
-    $img = "/user_images/".$user_data['avatar'];
-}
-
+$img = $user_data['avatar'] ? "/user_images/" . $user_data['avatar'] : "/images/corgi.jpg";
 $login = $user_data['login'];
 $about = $user_data['about'];
-if($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($my_user_id == $req_user_id && $_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['login'])) {
         $newlogin = $_POST['login'];
         if ($login == '') {
@@ -35,26 +37,33 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $uploaddir = $_SERVER['DOCUMENT_ROOT']."/user_images/";
         $filename = $login."_".date("MdYhisA");
         $err = False;
-        echo (mime_content_type($_FILES['userfile']['tmp_name']));
-        switch (mime_content_type($_FILES['userfile']['tmp_name'])){
-            case "image/jpg": {
+        switch (mime_content_type($_FILES['userfile']['tmp_name'])) {
+            case "image/jpg":
+            {
                 $filename .= ".jpg";
                 break;
             }
-            case "image/jpeg": {
+            case "image/jpeg":
+            {
                 $filename .= ".jpeg";
                 break;
             }
-            case "image/png": {
+            case "image/png":
+            {
                 $filename .= ".png";
                 break;
             }
-            default:{
-                echo ("<script> alert('Неверный тип файла')</script>");
+            default:
+            {
+                echo("<script> alert('Неверный тип файла')</script>");
                 $err = True;
             }
         }
-        if(!$err) {
+        if($_FILES['userfile']['size'] > 5*1024*1024) {
+            echo("<script> alert('Размер файла превышает 5 МБ')</script>");
+            $err = True;
+        }
+        if (!$err) {
             $uploadfile = $uploaddir . $filename;
             if (!file_exists($uploaddir)) {
                 mkdir($uploaddir, 0700);
@@ -65,7 +74,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
                     "avatar" => $filename,
                 );
                 $user->updateById($array, $_SESSION['id']);
-                $img = "/user_images/".$filename;
+                $img = "/user_images/" . $filename;
 
             } else {
                 echo("<script> alert('Возможная атака с помощью файловой загрузки!')</script>");
@@ -115,50 +124,59 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
         );
         $user->updateById($array, $_SESSION['id']);
         $login = $newlogin;
-        $_SESSION['login']=$myrow['login'];
+        $_SESSION['login'] = $myrow['login'];
     }
 }
-function h_die($err) {
+function h_die($err)
+{
     echo '<h5 class="text-center">' . $err . '</h5>';
     exit();
 }
+
 ?>
-<script>
-    a = document.getElementById("edit_profile");
-    a.style.display = "None";
-    function hideEditProfile() {
-        a.style.display = "";
-    }
-</script>
+    <script>
+        function hideEditProfile() {
+            const a = document.getElementById("edit_profile");
+            a.style.display = a.style.display ? "" : "none";
+        }
+    </script>
+    <div class="mx-auto text form-profile" style="max-width: 800px;">
+        <table id="profileTable">
+            <tr>
+                <td>
+                    <img src="<?= $img ?>" width="200px" alt="avatar"/>
+                </td>
+                <td id="main-cell">
+                    <h4 class="font-weight-normal">
+                        <? echo("Имя: " . $name) ?>
+                    </h4>
+                    <h4 class="font-weight-normal"><? echo("Логин: " . $login) ?></h4>
+                    <h4 class="font-weight-normal">Обо мне:</h4>
+                    <p><?= $about ? $about : "Расскажите о себе!" ?></p>
+                    <? if ($req_user_id == $my_user_id): ?>
+                        <input type="button" class="btn btn-lg btn-primary" onclick="hideEditProfile()"
+                               value="Редактировать">
+                    <? endif; ?>
+                </td>
+            </tr>
+        </table>
+    </div>
 
-<div class="mx-auto text form-profile" style="max-width: 800px;">
-    <img src=<?echo ($img)?>
-         width="200px" align="left" border="0" hspace="2%" vspace="2%" />
-    <h4 class="font-weight-normal">
-        <?echo("Имя: ".$name)?>
-    </h4>
-    <h4 class="font-weight-normal"><?echo ("Логин: " . $login)?></h4>
-    <h4 class="font-weight-normal">Обо мне:</h4>
-    <p><? if(!$about){
-            echo "Расскажите о себе!";
-        }else {
-            echo $about;
-        }?></p>
-    <input type="button" class="btn btn-lg btn-primary btn-block" onclick="hideEditProfile()" value="Редактировать">
-</div>
-
-<div class="mx-auto text" style="max-width: 600px; border: solid black 1px; margin: 20px">
-<form enctype="multipart/form-data" class="mx-auto text form-profile" id="edit_profile" method="post">
-    <h5 class="font-weight-normal">Введите новые данные</h5>
-    <h5> Логин </h5>
-    <input name="login" type="text" id="inputLogin" class="form-control" value="<?echo ($login)?>">
-    <h5> Имя </h5>
-    <input name="name" type="text" id="inputName" class="form-control" value="<?echo ($name)?>">
-    <h5> О себе </h5>
-    <textarea name="about" class="form-control" id="inputAbout"><?echo ($about)?></textarea>
-    <h5> Аватар </h5>
-    <input name="userfile" type="file" />
-    <button class="btn btn-lg btn-primary mx-auto" type="submit">Принять</button>
-</form>
-
-
+<? if ($req_user_id == $my_user_id): ?>
+    <div class="mx-auto text" id="edit_profile" style="display: none;">
+        <form enctype="multipart/form-data" class="mx-auto text form-profile" method="post">
+            <h5 class="font-weight-normal">Введите новые данные</h5>
+            <label for="inputLogin" class="h5">Логин</label>
+            <input name="login" type="text" id="inputLogin" class="form-control" value="<? echo($login) ?>">
+            <label for="inputName" class="h5">Имя</label>
+            <input name="name" type="text" id="inputName" class="form-control" value="<? echo($name) ?>">
+            <label for="inputAbout" class="h5">О себе</label>
+            <textarea name="about" class="form-control" id="inputAbout"><? echo($about) ?></textarea>
+            <div class="mt-3">
+                <label class="h5" for="userfileInput">Аватар</label>
+                <input name="userfile" id="userfileInput" type="file"/>
+                <button class="btn btn-lg btn-primary mx-auto" type="submit">Принять</button>
+            </div>
+        </form>
+    </div>
+<? endif; ?>
