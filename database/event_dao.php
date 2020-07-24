@@ -11,7 +11,8 @@ class EventDao extends Object
 
     public function getFeed()
     {
-        $sql = "SELECT ev.id, ev.user_id, ev.task_id, ev.comment, ev.type, u.name, t.description, ev.old_value, ev.created
+        $sql = "SELECT ev.id, ev.user_id, ev.task_id, ev.comment, ev.type,
+u.name, t.description, ev.old_value, ev.created, (t.parent_id IS NULL) as is_checklist
 FROM `event` ev
 LEFT JOIN `user` u ON ev.user_id = u.id
 LEFT JOIN `task` t ON ev.task_id = t.id

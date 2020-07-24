@@ -37,22 +37,26 @@ if ($my_user_id == $req_user_id && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $uploaddir = $_SERVER['DOCUMENT_ROOT'] . "/user_images/";
         $filename = $login . "_" . date("MdYhisA");
         $err = False;
-        echo (mime_content_type($_FILES['userfile']['tmp_name']));
-        switch (mime_content_type($_FILES['userfile']['tmp_name'])){
-            case "image/jpg": {
+        echo(mime_content_type($_FILES['userfile']['tmp_name']));
+        switch (mime_content_type($_FILES['userfile']['tmp_name'])) {
+            case "image/jpg":
+            {
                 $filename .= ".jpg";
                 break;
             }
-            case "image/jpeg": {
+            case "image/jpeg":
+            {
                 $filename .= ".jpeg";
                 break;
             }
-            case "image/png": {
+            case "image/png":
+            {
                 $filename .= ".png";
                 break;
             }
-            default:{
-                echo ("<script> alert('Неверный тип файла')</script>");
+            default:
+            {
+                echo("<script> alert('Неверный тип файла')</script>");
                 $err = True;
             }
         }
@@ -71,7 +75,7 @@ if ($my_user_id == $req_user_id && $_SERVER['REQUEST_METHOD'] == 'POST') {
                     "avatar" => $filename,
                 );
                 $user->updateById($array, $_SESSION['id']);
-                $img = "/user_images/".$filename;
+                $img = "/user_images/" . $filename;
 
             } else {
                 echo("<script> alert('Возможная атака с помощью файловой загрузки!')</script>");
@@ -129,6 +133,7 @@ function h_die($err)
     echo '<h5 class="text-center">' . $err . '</h5>';
     exit();
 }
+
 ?>
 <script>
     function hideEditProfile() {
@@ -178,19 +183,15 @@ function h_die($err)
         </div>
     <? endif; ?>
 
-    <a href="/tasks?id=<?=$req_user_id?>" class="d-block text-center">
-        <?=$req_user_id == $my_user_id ? "Просмотреть свои задачи" : "Просмотреть задачи пользователя"?>
-    </a>
-
     <?php
-    require ("../database/event_dao.php");
+    require("../database/event_dao.php");
     session_start();
     $object = new EventDao();
     $id = $_SESSION['id'];
     $data = $object->getLastDone($id);
     $arr = [];
     foreach ($data as $value) {
-        $arr[$value['date']] =$value['count'];
+        $arr[$value['date']] = $value['count'];
     }
     $today = date_create(date("Y-M-d"));
     $lastDay = date_modify($today, '-6 day');
@@ -198,28 +199,34 @@ function h_die($err)
     $colorString = "<tr>";
     $max = max($arr);
     for ($i = 0; $i < 7; $i++) {
-        $dataString .= "<td>".date_format($lastDay, 'Y-m-d')."</td>";
-        if(!array_key_exists(date_format($lastDay, 'Y-m-d'), $arr)){
+        $dataString .= "<td>" . date_format($lastDay, 'Y-m-d') . "</td>";
+        if (!array_key_exists(date_format($lastDay, 'Y-m-d'), $arr)) {
             $colorString .= "<td style=\"background-color: rgb(255, 255, 255);\" height = 40px></td>";
-        }
-        else{
+        } else {
             $value = $arr[date_format($lastDay, 'Y-m-d')];
-            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, ".getColor($value, $max).");\" height = 40px>$a</td>";
+            $colorString .= "<td style=\"background-color: rgba(0, 0, 255, " . getColor($value, $max) . ");\" height = 40px>$a</td>";
         }
         $lastDay = date_modify($today, '+1 day');
     }
     $dataString .= "</tr>";
     $dataString .= "</tr>";
 
-    function getColor($value, $max){
-        return $value/$max;
+    function getColor($value, $max)
+    {
+        return $value / $max;
     }
+
     ?>
     <div class="mx-auto text" style="max-width: 600px; margin: 20px">
         <table border="1">
             <caption>Мои успехи за последние 7 дней</caption>
             <? echo $dataString;
-            echo $colorString?>
+            echo $colorString ?>
         </table>
+
+        <a href="/tasks?id=<?= $req_user_id ?>" class="d-block text-center">
+            <?= $req_user_id == $my_user_id ? "Просмотреть свои задачи" : "Просмотреть задачи пользователя" ?>
+        </a>
+    </div>
 </div>
 
