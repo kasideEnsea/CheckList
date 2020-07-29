@@ -37,7 +37,6 @@ if ($my_user_id == $req_user_id && $_SERVER['REQUEST_METHOD'] == 'POST') {
         $uploaddir = $_SERVER['DOCUMENT_ROOT'] . "/user_images/";
         $filename = $login . "_" . date("MdYhisA");
         $err = False;
-        echo(mime_content_type($_FILES['userfile']['tmp_name']));
         switch (mime_content_type($_FILES['userfile']['tmp_name'])) {
             case "image/jpg":
             {
