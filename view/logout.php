@@ -8,7 +8,6 @@ session_write_close();
 ?>
 <script>
     localStorage.removeItem('user_id')
-    localStorage.removeItem('login')
     localStorage.removeItem('role')
 </script>
 <h2 class="text-center">Вы вышли из системы</h2>
